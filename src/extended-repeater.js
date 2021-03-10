@@ -1,22 +1,41 @@
 const CustomError = require("../extensions/custom-error");
 
 module.exports = function repeater(str, options) {
-  this.repeatTimes = options.repeatTimes !== undefined ? options.repeatTimes : 1;
-  this.separator = options.separator !== undefined ? String(options.separator) : '+';
-  this.addition = options.addition !== undefined ? String(options.addition) : '';
-  this.additionRepeatTimes = options.additionRepeatTimes !== undefined ? options.additionRepeatTimes : 1;
-  this.additionSeparator = options.additionSeparator !== undefined ? String(options.additionSeparator) : '+';
-  
-  let newStr='';
-  
-  for (let i = 0; i < this.repeatTimes; i++) {
-      newStr += String(str);
-      for (let j = 0; j < this.additionRepeatTimes; j++) {
-          newStr += this.addition;      
-          j < (this.additionRepeatTimes-1) ? newStr += this.additionSeparator : 0;
-      }
-      i < (this.repeatTimes - 1) ? newStr += this.separator : 0;
+  let strings = []
+  let additions = []
+  let addition = ''
+
+  if (!options.hasOwnProperty('repeatTimes') || options.repeatTimes === undefined) {
+    options.repeatTimes = 0;
+  }
+  if (!options.hasOwnProperty('separator')) {
+    options.separator = '+';
+  }
+  if (!options.hasOwnProperty('addition')) {
+    options.addition = ''
+  }
+  if (!options.hasOwnProperty('additionRepeatTimes') || options.additionRepeatTimes === undefined) {
+    options.additionRepeatTimes = 1;
+  }
+  if (!options.hasOwnProperty('additionSeparator')) {
+    options.additionSeparator = '|';
   }
 
-  return newStr;
+  if (options.repeatTimes === 0) strings.push(String(str))
+
+  while (options.repeatTimes > 0) {
+    strings.push(String(str))
+    options.repeatTimes -= 1;
+  }
+
+  while (options.additionRepeatTimes > 0) {
+    additions.push(String(options.addition))
+    options.additionRepeatTimes -= 1;
+  }
+  addition = additions.join(options.additionSeparator)
+  return strings.map(item => item + addition).join(options.separator)
 };
+
+const repeater = require('./extended-repeater');
+
+console.log(repeater('TESTstr', { repeatTimes: undefined, separator: 'ds', addition: 'ADD!', additionRepeatTimes: undefined, additionSeparator: ')))000' }))
